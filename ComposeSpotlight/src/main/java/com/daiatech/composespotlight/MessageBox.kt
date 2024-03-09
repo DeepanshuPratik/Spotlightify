@@ -2,97 +2,91 @@ package com.daiatech.composespotlight
 
 
 import androidx.compose.ui.graphics.Path
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 
-@Composable
-fun MessageBoxWithTail(
-    modifier: Modifier = Modifier,
-    textBoxColor: Color,
-    shape: Shape,
-    textBlock : Boolean,
-    position: IntOffset,
-    componentSize: IntSize,
-) {
-    Canvas(
-        modifier = modifier
-            .zIndex(Float.MAX_VALUE),
-        onDraw = {
+class SpeechBubbleShape(
+    private val cornerRadius: Dp = 8.dp,
+    private val shape: Shape = RectangleShape,
+    private val position: IntOffset,
+    private val componentSize: IntSize,
 
-            val buttonWidth = componentSize.width // Width of the KButton
-            val buttonHeight = componentSize.height // Height of the KButton
-            val buttonX = position.x.toFloat() // X-coordinate of the KButton
-            val buttonY = position.y.toFloat() // Y-coordinate of the KButton
-            val messageBox = Path().apply {
-                when (shape) {
-                    RectangleShape -> {
-                        if(textBlock){
-                            moveTo(
-                                buttonX + buttonWidth,
-                                buttonY + buttonHeight
-                            )
-                            lineTo(
-                                position.x + componentSize.width + 3.dp.toPx(),
-                                position.y + componentSize.height + 11.dp.toPx()
-                            )
-                            lineTo(
-                                position.x + componentSize.width + 11.dp.toPx(),
-                                position.y + componentSize.height + 3.dp.toPx()
-                            )
+    ): Shape {
 
-                            addRoundRect(
-                                RoundRect(
-                                    left = position.x.toFloat() + componentSize.width + 3.dp.toPx(),
-                                    top = position.y.toFloat() + componentSize.height + 3.dp.toPx(),
-                                    right = position.x + componentSize.width + 72.dp.toPx(),
-                                    bottom = position.y + componentSize.height + 48.dp.toPx(),
-                                    radiusX = 8.dp.toPx(),
-                                    radiusY = 8.dp.toPx()
-                                )
-                            )
-                        }
-                    }
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        val cornerRadius = with(density) { cornerRadius.toPx() }
+        val path = Path().apply {
+            when (shape) {
+                RectangleShape -> {
+                    moveTo(
+                        position.x.toFloat() + componentSize.width,
+                        position.y.toFloat() + componentSize.height
+                    )
+                    lineTo(
+                        position.x + componentSize.width + with(density) {3.dp.toPx()},
+                        position.y + componentSize.height + with(density) {11.dp.toPx()}
+                    )
+                    lineTo(
+                        position.x + componentSize.width + with(density) {11.dp.toPx()},
+                        position.y + componentSize.height + with(density) {3.dp.toPx()}
+                    )
 
-                    CircleShape -> {
-                        if (textBlock){
-                            moveTo(
-                                position.x + 0.853f * componentSize.width.toFloat() ,
-                                position.y + 0.853f * componentSize.height.toFloat()
-                            )
-                            lineTo(
-                                position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
-                                position.y + componentSize.height + 8.dp.toPx()
-                            )
-                            lineTo(
-                                position.x + componentSize.width + 8.dp.toPx(),
-                                position.y.toFloat() + componentSize.height // + 3.dp.toPx()
-                            )
-                            addRoundRect(
-                                RoundRect(
-                                    left = position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
-                                    top = position.y.toFloat() + componentSize.height,// + 3.dp.toPx(),
-                                    right = position.x + componentSize.width + 72.dp.toPx(),
-                                    bottom = position.y + componentSize.height + 48.dp.toPx(),
-                                    radiusX = 8.dp.toPx(),
-                                    radiusY = 8.dp.toPx()
-                                )
-                            )
-                        }
-                    }
+                    addRoundRect(
+                        RoundRect(
+                            left = position.x.toFloat() + componentSize.width + with(density) {3.dp.toPx()},
+                            top = position.y.toFloat() + componentSize.height + with(density) {3.dp.toPx()},
+                            right = position.x + componentSize.width + with(density) {72.dp.toPx()},
+                            bottom = position.y + componentSize.height + with(density) {48.dp.toPx()},
+                            radiusX = cornerRadius,
+                            radiusY = cornerRadius
+                        )
+                    )
+                }
+
+                CircleShape -> {
+                    moveTo(
+                        position.x + 0.853f * componentSize.width ,
+                        position.y + 0.853f * componentSize.height
+                    )
+                    lineTo(
+                        position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
+                        position.y + componentSize.height + with(density) {8.dp.toPx()}
+                    )
+                    lineTo(
+                        position.x + componentSize.width + with(density) {8.dp.toPx()},
+                        position.y.toFloat() + componentSize.height // + 3.dp.toPx()
+                    )
+                    addRoundRect(
+                        RoundRect(
+                            left = position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
+                            top = position.y.toFloat() + componentSize.height,// + 3.dp.toPx(),
+                            right = position.x + componentSize.width + with(density) {72.dp.toPx()},
+                            bottom = position.y + componentSize.height + with(density) {48.dp.toPx()},
+                            radiusX = cornerRadius,
+                            radiusY = cornerRadius
+                        )
+                    )
                 }
             }
-            drawPath(messageBox, SolidColor(textBoxColor))
+
+            close()
         }
-    )
+
+        return Outline.Generic(path)
+    }
 }
+

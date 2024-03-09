@@ -4,10 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,8 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -30,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.daiatech.composespotlight.ui.theme.ComposeSpotlightTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +57,7 @@ class MainActivity : ComponentActivity() {
                     color = Color.White
                 ) {
                     val viewModel: MainViewModal = viewModel()
-                    val animationSequence = listOf("box3","box1","box2","circle1","circle2")
+                    val animationSequence = listOf("circle1","box1","box2","circle1","circle2")
                     var coordinates by remember { mutableStateOf(Pair(IntOffset.Zero,IntSize.Zero)) }
                     var shape by remember { mutableStateOf(RectangleShape) }
                     var currentTargetComposableComponentCoordinates : IntOffset by remember { mutableStateOf(
@@ -136,6 +144,22 @@ class MainActivity : ComponentActivity() {
                         shape = shape,
                         textBlock = true
                     )
+//                    Box(
+//                        modifier = Modifier
+//                            .clip(SpeechBubbleShape(
+//                                position = IntOffset(0,63),
+//                                componentSize = IntSize(223,63)
+//                            ))
+//                            .background(Color.Red)
+//                    ) {
+//                        Text(
+//                            text = "Hello world!",
+//                            modifier = Modifier
+//                                .padding(15.dp)
+//                                .align(Alignment.TopStart),
+//                            color = Color.Cyan
+//                        )
+//                    }
                     LaunchedEffect(null) {
                         animationSequence.forEach {
                             coordinates = coordsMap[it]!!.second
@@ -162,5 +186,28 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     ComposeSpotlightTheme {
         Greeting("Android")
+    }
+}
+
+
+@Preview
+@Composable
+fun SpeechBubblePreview() {
+    ComposeSpotlightTheme {
+        Box(
+            modifier = Modifier
+                .size(200.dp)
+                .clip(SpeechBubbleShape(
+                    position = IntOffset(0,63),
+                    componentSize = IntSize(223,63)
+                ))
+                .background(Color.Red)
+        ) {
+            Text(
+                text = "Hello world!",
+                modifier = Modifier
+                    .offset(x = 15.dp)
+            )
+        }
     }
 }
