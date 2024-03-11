@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.daiatech.composespotlight.ui.theme.ComposeSpotlightTheme
@@ -143,6 +144,9 @@ class MainActivity : ComponentActivity() {
                         position = coordinates.first,
                         shape = shape,
                         textBlock = true,
+                        textSize = 12.sp,
+                        textColor = Color.Black.copy(alpha = 0.7f),
+                        textBlockColor = Color.Green.copy(alpha = 0.7f),
                         text = "Hello Buddy! how are you? Hi hello buddy?"
                     )
                     LaunchedEffect(null) {

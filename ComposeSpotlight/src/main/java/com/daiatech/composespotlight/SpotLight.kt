@@ -1,11 +1,13 @@
 package com.daiatech.composespotlight
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toOffset
@@ -38,8 +41,10 @@ fun SpotLight(
     position: IntOffset,
     componentSize: IntSize,
     text : String = "",
+    textSize: TextUnit = 16.sp,
     textBlock : Boolean,
-    textBlockColor: Color = Color.Red,
+    textColor : Color = Color.Black,
+    textBlockColor: Color = Color.Green.copy(alpha = 0.7f),
     minTextBoxWidth: Dp = 114.dp,
     maxTextBoxWidth : Dp = 300.dp
 ) {
@@ -48,8 +53,8 @@ fun SpotLight(
     val textMeasurerResult = textMeasurer.measure(
         text = text,
         style = TextStyle(
-            color = Color.Black,
-            fontSize = 16.sp,
+            color = textColor,
+            fontSize = textSize,
             fontFamily = FontFamily.Default
         ),
         constraints = Constraints(
@@ -62,6 +67,19 @@ fun SpotLight(
     val textBoxHeight = textMeasurerResult.size.height
     val textBoxWidth = textMeasurerResult.size.width
     Box(Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(
+                    SpeechBubbleShape(
+                        position = position,
+                        componentSize = componentSize,
+                        shape = shape,
+                        textBoxSize = Pair(textBoxWidth,textBoxHeight)
+                    )
+                )
+                .background(textBlockColor)
+        )
         Canvas(
             modifier = modifier
                 .fillMaxSize(),
@@ -70,6 +88,7 @@ fun SpotLight(
                 val buttonHeight = componentSize.height // Height of the KButton
                 val buttonX = position.x.toFloat() // X-coordinate of the KButton
                 val buttonY = position.y.toFloat() // Y-coordinate of the KButton
+                val textBoxPadding = 10.dp
                 val spotlightPath = Path().apply {
                     when (shape) {
                         RectangleShape -> {
@@ -101,26 +120,17 @@ fun SpotLight(
                                     RoundRect(
                                         left = position.x.toFloat() + componentSize.width + 3.dp.toPx(),
                                         top = position.y.toFloat() + componentSize.height + 3.dp.toPx(),
-                                        right = position.x + componentSize.width + textBoxWidth.toFloat() + 10.dp.toPx(),
-                                        bottom = position.y + componentSize.height + textBoxHeight.toFloat() + 10.dp.toPx(),
+                                        right = position.x + componentSize.width + textBoxWidth.toFloat() + textBoxPadding.toPx(),
+                                        bottom = position.y + componentSize.height + textBoxHeight.toFloat() + textBoxPadding.toPx(),
                                         radiusX = 8.dp.toPx(),
                                         radiusY = 8.dp.toPx()
                                     )
                                 )
-//                                drawText(
-//                                    textMeasurer = textMeasurer,
-//                                    text = AnnotatedString(text),
-//                                    style = TextStyle(fontSize = 16.sp, color = Color.Black),
-//                                    topLeft = Offset(
-//                                        x = position.x.toFloat() + componentSize.width + 4.dp.toPx(),
-//                                        y = position.y.toFloat() + componentSize.height + 0.3f * 0.56f * textBoxWidth.toPx()
-//                                    ),
-//                                    overflow = TextOverflow.Ellipsis,
-//                                )
                                 withTransform({
                                     translate(
-                                        position.x.toFloat() + componentSize.width + 12.dp.value,
-                                        position.y.toFloat() + componentSize.height + 0.3f * 0.56f * minTextBoxWidth.value)
+                                        position.x.toFloat() + componentSize.width + textBoxPadding.value + 3.dp.value,
+                                        position.y.toFloat() + componentSize.height + textBoxPadding.value + 3.dp.value
+                                    )
                                 }) {
                                     textMeasurerResult.multiParagraph.paint(
                                         canvas = drawContext.canvas,
@@ -158,25 +168,22 @@ fun SpotLight(
                                     RoundRect(
                                         left = position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
                                         top = position.y.toFloat() + componentSize.height,// + 3.dp.toPx(),
-                                        right = position.x + componentSize.width + minTextBoxWidth.toPx(),
-                                        bottom = position.y + componentSize.height + 0.56f*minTextBoxWidth.toPx(),
+                                        right = position.x + componentSize.width + textBoxWidth + textBoxPadding.toPx(),
+                                        bottom = position.y + componentSize.height + textBoxHeight + textBoxPadding.toPx(),
                                         radiusX = 8.dp.toPx(),
                                         radiusY = 8.dp.toPx()
                                     )
                                 )
-                                drawText(
-                                    textMeasurer = textMeasurer,
-                                    text = text,
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        color = Color.Black,
-                                    ),
-                                    topLeft = Offset(
-                                        x = position.x.toFloat() + componentSize.width + 4.dp.toPx(),
-                                        y = position.y.toFloat() + componentSize.height + 0.3f*0.56f*minTextBoxWidth.toPx()
-                                    ),
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                withTransform({
+                                    translate(
+                                        position.x.toFloat() + componentSize.width + textBoxPadding.value,
+                                        position.y.toFloat() + componentSize.height + textBoxPadding.value)
+                                }) {
+                                    textMeasurerResult.multiParagraph.paint(
+                                        canvas = drawContext.canvas,
+                                        blendMode = DrawScope.DefaultBlendMode
+                                    )
+                                }
                             }
                         }
                     }
@@ -190,23 +197,4 @@ fun SpotLight(
             }
         )
     }
-//    Box(
-//        modifier = Modifier
-//            .clip(
-//                SpeechBubbleShape(
-//                    position = position,
-//                    componentSize = componentSize,
-//                    shape = shape
-//                )
-//            )
-//            .background(Color.Red)
-//    ) {
-//        Text(
-//            text = text,
-//            modifier = Modifier
-//                .padding(15.dp)
-//                .align(Alignment.TopStart),
-//            color = Color.Cyan
-//        )
-//    }
 }

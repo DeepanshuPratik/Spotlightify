@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 
 class SpeechBubbleShape(
     private val cornerRadius: Dp = 8.dp,
+    private val boxPadding: Dp = 10.dp,
+    private val textBoxSize: Pair<Int,Int>,
     private val shape: Shape,
     private val position: IntOffset,
     private val componentSize: IntSize,
@@ -49,8 +51,8 @@ class SpeechBubbleShape(
                         RoundRect(
                             left = position.x.toFloat() + componentSize.width + with(density) {3.dp.toPx()},
                             top = position.y.toFloat() + componentSize.height + with(density) {3.dp.toPx()},
-                            right = position.x + componentSize.width + with(density) {88.dp.toPx()},
-                            bottom = position.y + componentSize.height + with(density) {56.dp.toPx()},
+                            right = position.x + componentSize.width + textBoxSize.first + with(density) {boxPadding.toPx()},
+                            bottom = position.y + componentSize.height + textBoxSize.second + with(density) {boxPadding.toPx()},
                             radiusX = cornerRadius,
                             radiusY = cornerRadius
                         )
@@ -74,8 +76,8 @@ class SpeechBubbleShape(
                         RoundRect(
                             left = position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
                             top = position.y.toFloat() + componentSize.height,// + 3.dp.toPx(),
-                            right = position.x + componentSize.width + with(density) {104.dp.toPx()},
-                            bottom = position.y + componentSize.height + with(density) {56.dp.toPx()},
+                            right = position.x + componentSize.width + textBoxSize.first + with(density) {boxPadding.toPx()},
+                            bottom = position.y + componentSize.height + textBoxSize.second + with(density) {boxPadding.toPx()},
                             radiusX = cornerRadius,
                             radiusY = cornerRadius
                         )
