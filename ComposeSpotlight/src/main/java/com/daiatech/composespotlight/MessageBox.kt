@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 
 class SpeechBubbleShape(
     private val cornerRadius: Dp = 8.dp,
-    private val shape: Shape = RectangleShape,
+    private val shape: Shape,
     private val position: IntOffset,
     private val componentSize: IntSize,
 
@@ -49,8 +49,8 @@ class SpeechBubbleShape(
                         RoundRect(
                             left = position.x.toFloat() + componentSize.width + with(density) {3.dp.toPx()},
                             top = position.y.toFloat() + componentSize.height + with(density) {3.dp.toPx()},
-                            right = position.x + componentSize.width + with(density) {72.dp.toPx()},
-                            bottom = position.y + componentSize.height + with(density) {48.dp.toPx()},
+                            right = position.x + componentSize.width + with(density) {88.dp.toPx()},
+                            bottom = position.y + componentSize.height + with(density) {56.dp.toPx()},
                             radiusX = cornerRadius,
                             radiusY = cornerRadius
                         )
@@ -59,8 +59,8 @@ class SpeechBubbleShape(
 
                 CircleShape -> {
                     moveTo(
-                        position.x + 0.853f * componentSize.width ,
-                        position.y + 0.853f * componentSize.height
+                        1.7071f * (position.x + componentSize.width.toFloat() / 2) ,
+                        position.y + componentSize.height.toFloat() / 2 + 0.7071f * (position.x + componentSize.width.toFloat() / 2)
                     )
                     lineTo(
                         position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
@@ -74,8 +74,8 @@ class SpeechBubbleShape(
                         RoundRect(
                             left = position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
                             top = position.y.toFloat() + componentSize.height,// + 3.dp.toPx(),
-                            right = position.x + componentSize.width + with(density) {72.dp.toPx()},
-                            bottom = position.y + componentSize.height + with(density) {48.dp.toPx()},
+                            right = position.x + componentSize.width + with(density) {104.dp.toPx()},
+                            bottom = position.y + componentSize.height + with(density) {56.dp.toPx()},
                             radiusX = cornerRadius,
                             radiusY = cornerRadius
                         )

@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                     color = Color.White
                 ) {
                     val viewModel: MainViewModal = viewModel()
-                    val animationSequence = listOf("circle1","box1","box2","circle1","circle2")
+                    val animationSequence = listOf("box1","circle1","box2","circle2","box3")
                     var coordinates by remember { mutableStateOf(Pair(IntOffset.Zero,IntSize.Zero)) }
                     var shape by remember { mutableStateOf(RectangleShape) }
                     var currentTargetComposableComponentCoordinates : IntOffset by remember { mutableStateOf(
@@ -142,24 +142,9 @@ class MainActivity : ComponentActivity() {
                         componentSize = coordinates.second,
                         position = coordinates.first,
                         shape = shape,
-                        textBlock = true
+                        textBlock = true,
+                        text = "Hello Buddy! how are you? Hi hello buddy?"
                     )
-//                    Box(
-//                        modifier = Modifier
-//                            .clip(SpeechBubbleShape(
-//                                position = IntOffset(0,63),
-//                                componentSize = IntSize(223,63)
-//                            ))
-//                            .background(Color.Red)
-//                    ) {
-//                        Text(
-//                            text = "Hello world!",
-//                            modifier = Modifier
-//                                .padding(15.dp)
-//                                .align(Alignment.TopStart),
-//                            color = Color.Cyan
-//                        )
-//                    }
                     LaunchedEffect(null) {
                         animationSequence.forEach {
                             coordinates = coordsMap[it]!!.second
@@ -189,25 +174,3 @@ fun GreetingPreview() {
     }
 }
 
-
-@Preview
-@Composable
-fun SpeechBubblePreview() {
-    ComposeSpotlightTheme {
-        Box(
-            modifier = Modifier
-                .size(200.dp)
-                .clip(SpeechBubbleShape(
-                    position = IntOffset(0,63),
-                    componentSize = IntSize(223,63)
-                ))
-                .background(Color.Red)
-        ) {
-            Text(
-                text = "Hello world!",
-                modifier = Modifier
-                    .offset(x = 15.dp)
-            )
-        }
-    }
-}
