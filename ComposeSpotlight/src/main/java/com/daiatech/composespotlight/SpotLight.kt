@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.ClipOp
@@ -21,7 +20,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
@@ -84,28 +82,28 @@ fun SpotLight(
             modifier = modifier
                 .fillMaxSize(),
             onDraw = {
-                val buttonWidth = componentSize.width // Width of the KButton
-                val buttonHeight = componentSize.height // Height of the KButton
-                val buttonX = position.x.toFloat() // X-coordinate of the KButton
-                val buttonY = position.y.toFloat() // Y-coordinate of the KButton
+                val objectHighlightWidth = componentSize.width // Width of the KButton
+                val objectHighlightHeight = componentSize.height // Height of the KButton
+                val highlightXCoordinate = position.x.toFloat() // X-coordinate of the KButton
+                val highlightYCoordinate = position.y.toFloat() // Y-coordinate of the KButton
                 val textBoxPadding = 10.dp
                 val spotlightPath = Path().apply {
                     when (shape) {
                         RectangleShape -> {
                             addRoundRect(
                                 roundRect = RoundRect(
-                                    left = buttonX,
-                                    top = buttonY,
-                                    right = buttonX + buttonWidth,
-                                    bottom = buttonY + buttonHeight,
+                                    left = highlightXCoordinate,
+                                    top = highlightYCoordinate,
+                                    right = highlightXCoordinate + objectHighlightWidth,
+                                    bottom = highlightYCoordinate + objectHighlightHeight,
                                     radiusX = 8.dp.toPx(),
                                     radiusY = 8.dp.toPx()
                                 )
                             )
                             if(textBlock){
                                 moveTo(
-                                    buttonX + buttonWidth,
-                                    buttonY + buttonHeight
+                                    highlightXCoordinate + objectHighlightWidth,
+                                    highlightYCoordinate + objectHighlightHeight
                                 )
                                 lineTo(
                                     position.x + componentSize.width + 3.dp.toPx(),
