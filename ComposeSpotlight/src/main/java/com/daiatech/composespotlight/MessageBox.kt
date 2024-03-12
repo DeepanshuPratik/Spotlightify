@@ -3,6 +3,7 @@ package com.daiatech.composespotlight
 
 import androidx.compose.ui.graphics.Path
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
@@ -19,9 +20,9 @@ class SpeechBubbleShape(
     private val cornerRadius: Dp = 8.dp,
     private val boxPadding: Dp = 10.dp,
     private val textBoxSize: Pair<Int,Int>,
-    private val shape: Shape,
-    private val position: IntOffset,
-    private val componentSize: IntSize,
+    private val moveToCoordinates : Offset,
+    private val tipSize: Dp = 4.dp,
+    private val textBoxDirection: TextMessageDirection
 
     ): Shape {
 
@@ -31,64 +32,68 @@ class SpeechBubbleShape(
         density: Density
     ): Outline {
         val cornerRadius = with(density) { cornerRadius.toPx() }
+        val tipSize = with(density) {tipSize.toPx()}
+        val textBoxPadding = with(density) {boxPadding.toPx()}
+        val textBoxWidth = textBoxSize.first
+        val textBoxHeight = textBoxSize.second
+
         val path = Path().apply {
-            when (shape) {
-                RectangleShape -> {
-                    moveTo(
-                        position.x.toFloat() + componentSize.width,
-                        position.y.toFloat() + componentSize.height
+            when(textBoxDirection){
+                TextMessageDirection.LEFT -> {
+                    lineTo(
+                        moveToCoordinates.x - tipSize - cornerRadius,
+                        moveToCoordinates.y + tipSize
                     )
                     lineTo(
-                        position.x + componentSize.width + with(density) {3.dp.toPx()},
-                        position.y + componentSize.height + with(density) {11.dp.toPx()}
-                    )
-                    lineTo(
-                        position.x + componentSize.width + with(density) {11.dp.toPx()},
-                        position.y + componentSize.height + with(density) {3.dp.toPx()}
+                        moveToCoordinates.x - tipSize,
+                        moveToCoordinates.y + tipSize + cornerRadius
                     )
 
                     addRoundRect(
                         RoundRect(
-                            left = position.x.toFloat() + componentSize.width + with(density) {3.dp.toPx()},
-                            top = position.y.toFloat() + componentSize.height + with(density) {3.dp.toPx()},
-                            right = position.x + componentSize.width + textBoxSize.first + with(density) {boxPadding.toPx()},
-                            bottom = position.y + componentSize.height + textBoxSize.second + with(density) {boxPadding.toPx()},
+                            left = moveToCoordinates.x - tipSize - textBoxWidth - textBoxPadding,
+                            top = moveToCoordinates.y + tipSize,
+                            right = moveToCoordinates.x - tipSize,
+                            bottom = moveToCoordinates.y + tipSize + textBoxHeight + textBoxPadding,
                             radiusX = cornerRadius,
                             radiusY = cornerRadius
                         )
                     )
                 }
+                TextMessageDirection.RIGHT -> {
+                    moveTo( moveToCoordinates.x, moveToCoordinates.y )
+                    lineTo(
+                        moveToCoordinates.x + tipSize,
+                        moveToCoordinates.y + tipSize + cornerRadius
+                    )
+                    lineTo(
+                        moveToCoordinates.x + tipSize + cornerRadius,
+                        moveToCoordinates.y + tipSize
+                    )
 
-                CircleShape -> {
-                    moveTo(
-                        1.7071f * (position.x + componentSize.width.toFloat() / 2) ,
-                        position.y + componentSize.height.toFloat() / 2 + 0.7071f * (position.x + componentSize.width.toFloat() / 2)
-                    )
-                    lineTo(
-                        position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
-                        position.y + componentSize.height + with(density) {8.dp.toPx()}
-                    )
-                    lineTo(
-                        position.x + componentSize.width + with(density) {8.dp.toPx()},
-                        position.y.toFloat() + componentSize.height // + 3.dp.toPx()
-                    )
                     addRoundRect(
                         RoundRect(
-                            left = position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
-                            top = position.y.toFloat() + componentSize.height,// + 3.dp.toPx(),
-                            right = position.x + componentSize.width + textBoxSize.first + with(density) {boxPadding.toPx()},
-                            bottom = position.y + componentSize.height + textBoxSize.second + with(density) {boxPadding.toPx()},
+                            left = moveToCoordinates.x + tipSize,
+                            top = moveToCoordinates.y + tipSize,
+                            right = moveToCoordinates.x + tipSize + textBoxWidth + textBoxPadding,
+                            bottom = moveToCoordinates.y + tipSize + textBoxHeight + textBoxPadding,
                             radiusX = cornerRadius,
                             radiusY = cornerRadius
                         )
                     )
+                }
+                TextMessageDirection.MIDDLE -> {
+
                 }
             }
-
             close()
         }
 
         return Outline.Generic(path)
     }
+}
+
+enum class TextMessageDirection {
+    LEFT, MIDDLE, RIGHT
 }
 

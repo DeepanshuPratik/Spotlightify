@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.ClipOp
@@ -35,25 +37,29 @@ import androidx.compose.ui.unit.toOffset
 @Composable
 fun SpotLight(
     modifier: Modifier,
-    shape: Shape,
+    highlightShape: Shape,
     position: IntOffset,
     componentSize: IntSize,
-    text : String = "",
+    textBlock: Boolean,
+    minTextBoxWidth: Dp = 50.dp,
+    maxTextBoxWidth: Dp = 300.dp,
+    text: String = "",
+    textFont: FontFamily = FontFamily.Default,
     textSize: TextUnit = 16.sp,
-    textBlock : Boolean,
-    textColor : Color = Color.Black,
+    textBoxCornerRadius: Dp = 8.dp,
+    textColor: Color = Color.Black,
     textBlockColor: Color = Color.Green.copy(alpha = 0.7f),
-    minTextBoxWidth: Dp = 114.dp,
-    maxTextBoxWidth : Dp = 300.dp
+    textBoxDirection: TextMessageDirection = TextMessageDirection.RIGHT
 ) {
 
+    /** Text Specifications **/
     val textMeasurer = rememberTextMeasurer()
     val textMeasurerResult = textMeasurer.measure(
         text = text,
         style = TextStyle(
             color = textColor,
             fontSize = textSize,
-            fontFamily = FontFamily.Default
+            fontFamily = textFont
         ),
         constraints = Constraints(
             minWidth = minTextBoxWidth.value.toInt(),
@@ -62,33 +68,28 @@ fun SpotLight(
         softWrap = true,
         overflow = TextOverflow.Ellipsis
     )
+
+    /** TextBox Specs **/
     val textBoxHeight = textMeasurerResult.size.height
     val textBoxWidth = textMeasurerResult.size.width
+    val tipSize = remember { 4.dp }
+    val textBoxPadding = remember { 10.dp }
+
+    /** Highlighted Object Spec **/
+    val objectHighlightWidth = componentSize.width // Width of the target component
+    val objectHighlightHeight = componentSize.height // Height of the target component
+    val highlightXCoordinate = position.x.toFloat() // X-coordinate of the target component
+    val highlightYCoordinate = position.y.toFloat() // Y-coordinate of the target component
+
     Box(Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(
-                    SpeechBubbleShape(
-                        position = position,
-                        componentSize = componentSize,
-                        shape = shape,
-                        textBoxSize = Pair(textBoxWidth,textBoxHeight)
-                    )
-                )
-                .background(textBlockColor)
-        )
+
+        /** Highlighting component **/
         Canvas(
             modifier = modifier
                 .fillMaxSize(),
             onDraw = {
-                val objectHighlightWidth = componentSize.width // Width of the KButton
-                val objectHighlightHeight = componentSize.height // Height of the KButton
-                val highlightXCoordinate = position.x.toFloat() // X-coordinate of the KButton
-                val highlightYCoordinate = position.y.toFloat() // Y-coordinate of the KButton
-                val textBoxPadding = 10.dp
                 val spotlightPath = Path().apply {
-                    when (shape) {
+                    when (highlightShape) {
                         RectangleShape -> {
                             addRoundRect(
                                 roundRect = RoundRect(
@@ -96,46 +97,10 @@ fun SpotLight(
                                     top = highlightYCoordinate,
                                     right = highlightXCoordinate + objectHighlightWidth,
                                     bottom = highlightYCoordinate + objectHighlightHeight,
-                                    radiusX = 8.dp.toPx(),
-                                    radiusY = 8.dp.toPx()
+                                    radiusX = textBoxCornerRadius.toPx(),
+                                    radiusY = textBoxCornerRadius.toPx()
                                 )
                             )
-                            if(textBlock){
-                                moveTo(
-                                    highlightXCoordinate + objectHighlightWidth,
-                                    highlightYCoordinate + objectHighlightHeight
-                                )
-                                lineTo(
-                                    position.x + componentSize.width + 3.dp.toPx(),
-                                    position.y + componentSize.height + 11.dp.toPx()
-                                )
-                                lineTo(
-                                    position.x + componentSize.width + 11.dp.toPx(),
-                                    position.y + componentSize.height + 3.dp.toPx()
-                                )
-
-                                addRoundRect(
-                                    RoundRect(
-                                        left = position.x.toFloat() + componentSize.width + 3.dp.toPx(),
-                                        top = position.y.toFloat() + componentSize.height + 3.dp.toPx(),
-                                        right = position.x + componentSize.width + textBoxWidth.toFloat() + textBoxPadding.toPx(),
-                                        bottom = position.y + componentSize.height + textBoxHeight.toFloat() + textBoxPadding.toPx(),
-                                        radiusX = 8.dp.toPx(),
-                                        radiusY = 8.dp.toPx()
-                                    )
-                                )
-                                withTransform({
-                                    translate(
-                                        position.x.toFloat() + componentSize.width + textBoxPadding.value + 3.dp.value,
-                                        position.y.toFloat() + componentSize.height + textBoxPadding.value + 3.dp.value
-                                    )
-                                }) {
-                                    textMeasurerResult.multiParagraph.paint(
-                                        canvas = drawContext.canvas,
-                                        blendMode = DrawScope.DefaultBlendMode
-                                    )
-                                }
-                            }
                         }
 
                         CircleShape -> {
@@ -149,40 +114,6 @@ fun SpotLight(
                                     radius = (componentSize.width.toFloat() / 2)
                                 )
                             )
-                            if (textBlock){
-                                moveTo(
-                                    position.x + 0.853f * componentSize.width.toFloat() ,
-                                    position.y + 0.853f * componentSize.height.toFloat()
-                                )
-                                lineTo(
-                                    position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
-                                    position.y + componentSize.height + 8.dp.toPx()
-                                )
-                                lineTo(
-                                    position.x + componentSize.width + 8.dp.toPx(),
-                                    position.y.toFloat() + componentSize.height // + 3.dp.toPx()
-                                )
-                                addRoundRect(
-                                    RoundRect(
-                                        left = position.x.toFloat() + componentSize.width,// + 3.dp.toPx(),
-                                        top = position.y.toFloat() + componentSize.height,// + 3.dp.toPx(),
-                                        right = position.x + componentSize.width + textBoxWidth + textBoxPadding.toPx(),
-                                        bottom = position.y + componentSize.height + textBoxHeight + textBoxPadding.toPx(),
-                                        radiusX = 8.dp.toPx(),
-                                        radiusY = 8.dp.toPx()
-                                    )
-                                )
-                                withTransform({
-                                    translate(
-                                        position.x.toFloat() + componentSize.width + textBoxPadding.value,
-                                        position.y.toFloat() + componentSize.height + textBoxPadding.value)
-                                }) {
-                                    textMeasurerResult.multiParagraph.paint(
-                                        canvas = drawContext.canvas,
-                                        blendMode = DrawScope.DefaultBlendMode
-                                    )
-                                }
-                            }
                         }
                     }
                 }
@@ -194,5 +125,109 @@ fun SpotLight(
                 }
             }
         )
+        /** TextBox ColorFill and Text Holder **/
+        if (textBlock) {
+            val moveToCoordinates: Offset = remember(position, componentSize, highlightShape, textBoxDirection) {
+                findTextMessageStart(
+                    position = position,
+                    componentSize = componentSize,
+                    highlightShape = highlightShape,
+                    textBoxDirection = textBoxDirection
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(
+                        SpeechBubbleShape(
+                            textBoxSize = Pair(textBoxWidth, textBoxHeight),
+                            tipSize = tipSize,
+                            boxPadding = textBoxPadding,
+                            moveToCoordinates = moveToCoordinates,
+                            textBoxDirection = textBoxDirection
+                        )
+                    )
+                    .background(textBlockColor)
+            ) {
+                Canvas(
+                    modifier = modifier
+                        .fillMaxSize(),
+                    onDraw = {
+                        val textBoxPaddingWithDensity = textBoxPadding.toPx()
+                        val tipSizeWithDensity = tipSize.toPx()
+                        withTransform({
+                            translate(
+                                moveToCoordinates.x + tipSizeWithDensity + textBoxPaddingWithDensity / 2 ,
+                                moveToCoordinates.y + tipSizeWithDensity + textBoxPaddingWithDensity / 2
+                            )
+                        }) {
+                            textMeasurerResult.multiParagraph.paint(
+                                canvas = drawContext.canvas,
+                                blendMode = DrawScope.DefaultBlendMode
+                            )
+                        }
+                    }
+                )
+            }
+        }
     }
+}
+
+fun findTextMessageStart(
+    position: IntOffset,
+    componentSize: IntSize,
+    highlightShape: Shape,
+    textBoxDirection: TextMessageDirection
+): Offset {
+    var moveToCoordinates = Offset.Zero
+    val objectHighlightWidth = componentSize.width // Width of the target component
+    val objectHighlightHeight = componentSize.height // Height of the target component
+    val highlightXCoordinate = position.x.toFloat() // X-coordinate of the target component
+    val highlightYCoordinate = position.y.toFloat() // Y-coordinate of the target component
+    when (highlightShape) {
+        RectangleShape -> {
+            when (textBoxDirection) {
+                TextMessageDirection.LEFT -> {
+                    moveToCoordinates = Offset(
+                        x = highlightXCoordinate,
+                        y = highlightYCoordinate + objectHighlightHeight
+                    )
+                }
+
+                TextMessageDirection.RIGHT -> {
+                    moveToCoordinates = Offset(
+                        x = highlightXCoordinate + objectHighlightWidth,
+                        y = highlightYCoordinate + objectHighlightHeight
+                    )
+                }
+
+                TextMessageDirection.MIDDLE -> {
+                    moveToCoordinates = Offset(
+                        x = highlightXCoordinate + objectHighlightWidth / 2,
+                        y = highlightYCoordinate + objectHighlightHeight
+                    )
+                }
+            }
+        }
+
+        CircleShape -> {
+            when (textBoxDirection) {
+                TextMessageDirection.LEFT -> {
+
+                }
+
+                TextMessageDirection.RIGHT -> {
+                    moveToCoordinates = Offset(
+                        x = 1.7071f * (highlightXCoordinate + objectHighlightWidth / 2),
+                        y = highlightYCoordinate + objectHighlightHeight / 2 + 0.7071f * (highlightXCoordinate + objectHighlightWidth / 2)
+                    )
+                }
+
+                TextMessageDirection.MIDDLE -> {
+
+                }
+            }
+        }
+    }
+    return moveToCoordinates
 }
