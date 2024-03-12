@@ -51,8 +51,9 @@ class MainActivity : ComponentActivity() {
                     color = Color.White
                 ) {
                     val viewModel: MainViewModal = viewModel()
-                    val animationSequence = listOf("box2","circle3")
+                    val animationSequence = listOf("box2","circle2","box3")
                     var coordinates by remember { mutableStateOf(Pair(IntOffset.Zero,IntSize.Zero)) }
+                    var textMessage by remember { mutableStateOf("Hello Buddy! how are you? Hi hello buddy?") }
                     var shape by remember { mutableStateOf(RectangleShape) }
                     var currentTargetComposableComponentCoordinates : IntOffset by remember { mutableStateOf(IntOffset.Zero) }
                     var currentTargetComposableComponentSize : IntSize by remember { mutableStateOf(
@@ -71,6 +72,7 @@ class MainActivity : ComponentActivity() {
                         currentTargetComposableComponentSize = layoutCoordinates.size
                     }
                     val coordsMap by viewModel.coordsMap.collectAsState()
+                    val textMap by viewModel.textMap.collectAsState()
 
                     Column {
 
@@ -86,6 +88,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.onGloballyPositioned {
                                 onTargetComposableCoordinatesChange(it)
                                 viewModel.updateCoords( RectangleShape,"box2", currentTargetComposableComponentCoordinates, currentTargetComposableComponentSize)
+                                viewModel.updateTextMap("box2","Hey, You called Box2!")
                             }
                         ) {
                             Greeting("hello")
@@ -94,6 +97,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.onGloballyPositioned {
                                 onTargetComposableCoordinatesChange(it)
                                 viewModel.updateCoords( RectangleShape,"box3", currentTargetComposableComponentCoordinates, currentTargetComposableComponentSize)
+                                viewModel.updateTextMap("box3","Hey, You called Box3!")
                             }
                         ) {
                             Greeting("bye")
@@ -125,6 +129,7 @@ class MainActivity : ComponentActivity() {
                                             currentTargetComposableComponentCoordinates,
                                             currentTargetComposableComponentSize
                                         )
+                                        viewModel.updateTextMap("circle2","Hey, You called Circle2!")
                                     },
                                 painter = painterResource(id = R.drawable.ic_launcher_background),
                                 contentDescription = ""
@@ -156,13 +161,14 @@ class MainActivity : ComponentActivity() {
                         textSize = 16.sp,
                         textColor = Color.Black.copy(alpha = 0.7f),
                         textBlockColor = Color.Green.copy(alpha = 0.7f),
-                        text = "Hello Buddy! how are you? Hi hello buddy?",
+                        text = textMessage,
                         textBoxDirection = TextMessageDirection.RIGHT
                     )
                     LaunchedEffect(null) {
-                        animationSequence.forEach {
-                            coordinates = coordsMap[it]!!.second
-                            shape = coordsMap[it]!!.first
+                        animationSequence.forEach { key ->
+                            coordinates = coordsMap[key]!!.second
+                            shape = coordsMap[key]!!.first
+                            textMessage = textMap[key]?.let { textMap[key] } ?: "Hello Buddy! how are you? Hi hello buddy?"
                             delay(2000)
                         }
                     }

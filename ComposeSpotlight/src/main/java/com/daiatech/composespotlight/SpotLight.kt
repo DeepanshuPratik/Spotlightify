@@ -108,8 +108,8 @@ fun SpotLight(
                                 oval = Rect(
                                     center = position.toOffset()
                                         .copy(
-                                            x = position.x + componentSize.width.toFloat() / 2,
-                                            y = position.y + componentSize.height.toFloat() / 2
+                                            x = highlightXCoordinate + objectHighlightWidth / 2,
+                                            y = highlightYCoordinate + objectHighlightHeight / 2
                                         ),
                                     radius = (componentSize.width.toFloat() / 2)
                                 )
