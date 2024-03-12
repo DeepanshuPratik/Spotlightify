@@ -38,6 +38,7 @@ class SpeechBubbleShape(
         val textBoxHeight = textBoxSize.second
 
         val path = Path().apply {
+            moveTo( moveToCoordinates.x, moveToCoordinates.y )
             when(textBoxDirection){
                 TextMessageDirection.LEFT -> {
                     lineTo(
@@ -61,7 +62,6 @@ class SpeechBubbleShape(
                     )
                 }
                 TextMessageDirection.RIGHT -> {
-                    moveTo( moveToCoordinates.x, moveToCoordinates.y )
                     lineTo(
                         moveToCoordinates.x + tipSize,
                         moveToCoordinates.y + tipSize + cornerRadius
@@ -83,7 +83,25 @@ class SpeechBubbleShape(
                     )
                 }
                 TextMessageDirection.MIDDLE -> {
+                    lineTo(
+                        moveToCoordinates.x + tipSize / 2,
+                        moveToCoordinates.y + tipSize
+                    )
+                    lineTo(
+                        moveToCoordinates.x - tipSize / 2 ,
+                        moveToCoordinates.y + tipSize
+                    )
 
+                    addRoundRect(
+                        RoundRect(
+                            left = moveToCoordinates.x - textBoxWidth/2,
+                            top = moveToCoordinates.y + tipSize,
+                            right = moveToCoordinates.x + textBoxWidth/2 + textBoxPadding,
+                            bottom = moveToCoordinates.y + tipSize + textBoxHeight + textBoxPadding,
+                            radiusX = cornerRadius,
+                            radiusY = cornerRadius
+                        )
+                    )
                 }
             }
             close()

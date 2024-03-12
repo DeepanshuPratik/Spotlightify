@@ -41,8 +41,8 @@ fun SpotLight(
     position: IntOffset,
     componentSize: IntSize,
     textBlock: Boolean,
-    minTextBoxWidth: Dp = 50.dp,
-    maxTextBoxWidth: Dp = 300.dp,
+    minTextBoxWidth: Dp = 80.dp,
+    maxTextBoxWidth: Dp = 240.dp,
     text: String = "",
     textFont: FontFamily = FontFamily.Default,
     textSize: TextUnit = 16.sp,
@@ -72,7 +72,7 @@ fun SpotLight(
     /** TextBox Specs **/
     val textBoxHeight = textMeasurerResult.size.height
     val textBoxWidth = textMeasurerResult.size.width
-    val tipSize = remember { 4.dp }
+    val tipSize = remember { 8.dp }
     val textBoxPadding = remember { 10.dp }
 
     /** Highlighted Object Spec **/
@@ -128,7 +128,7 @@ fun SpotLight(
         /** TextBox ColorFill and Text Holder **/
         if (textBlock) {
             val moveToCoordinates: Offset = remember(position, componentSize, highlightShape, textBoxDirection) {
-                findTextMessageStart(
+                findTextMessageStartCoordinates(
                     position = position,
                     componentSize = componentSize,
                     highlightShape = highlightShape,
@@ -149,15 +149,30 @@ fun SpotLight(
                     )
                     .background(textBlockColor)
             ) {
+                /** Text Positioning **/
                 Canvas(
                     modifier = modifier
                         .fillMaxSize(),
                     onDraw = {
                         val textBoxPaddingWithDensity = textBoxPadding.toPx()
                         val tipSizeWithDensity = tipSize.toPx()
+                        var xTranslation = moveToCoordinates.x
                         withTransform({
+                            xTranslation += when(textBoxDirection){
+                                TextMessageDirection.RIGHT -> {
+                                    tipSizeWithDensity + textBoxPaddingWithDensity /2
+                                }
+
+                                TextMessageDirection.LEFT -> {
+                                    (-1)*tipSizeWithDensity - textBoxWidth
+                                }
+
+                                TextMessageDirection.MIDDLE -> {
+                                    (-1)*textBoxWidth / 2 + textBoxPaddingWithDensity /2
+                                }
+                            }
                             translate(
-                                moveToCoordinates.x + tipSizeWithDensity + textBoxPaddingWithDensity / 2 ,
+                                xTranslation,
                                 moveToCoordinates.y + tipSizeWithDensity + textBoxPaddingWithDensity / 2
                             )
                         }) {
@@ -173,7 +188,7 @@ fun SpotLight(
     }
 }
 
-fun findTextMessageStart(
+fun findTextMessageStartCoordinates(
     position: IntOffset,
     componentSize: IntSize,
     highlightShape: Shape,

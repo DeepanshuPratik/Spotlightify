@@ -157,7 +157,7 @@ class MainActivity : ComponentActivity() {
                         textColor = Color.Black.copy(alpha = 0.7f),
                         textBlockColor = Color.Green.copy(alpha = 0.7f),
                         text = "Hello Buddy! how are you? Hi hello buddy?",
-                        textBoxDirection = TextMessageDirection.LEFT
+                        textBoxDirection = TextMessageDirection.RIGHT
                     )
                     LaunchedEffect(null) {
                         animationSequence.forEach {
